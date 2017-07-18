@@ -3,6 +3,7 @@
 <head>
 	<meta charset="UTF-8">
 	<title>RhythmER Club</title>
+	<script type="text/javascript" src='modules.js'></script>
 </head>
 <style>
 	h1,body,section{margin: 0}
@@ -27,28 +28,28 @@
 	}
 </style>
 <body>
-	<section>
-		<!-- <h1 title="首先：我们要做什么？">First Question: What should we do?</h1>
-		<div>
-			<input type="text"><input type="button" value='submit'>
-		</div>
-		<div class="init" title="我们是谁？">Who we are?</div>
-		<div class="init" title="我们喜欢什么？">What do we like?</div>
-		<div class="init" title="我们要去哪？">Where should we go?</div>
-		<div class="init" title="我们能做啥？">What can we do?</div>
-		<div class="init" title="我们认可啥？">What will be honour?</div>
-		<div class="init" title="理由是啥？">What's the reason?</div>
-		<div class="init" title="奋斗？">Fight?</div>
-		<div class="init" title="擅长？">Avocation?</div>
-		<div class="init" title="尝试？">Taste?</div>
-		<div class="init" title="希望？">Desire?</div>
-		<div class="init" title="淫欲？">Lust?</div>
-		<div class="init" title="空虚？">Bored?</div>
-		<div class="init" title="爱？">Love?</div>
-		<div class="init" title="和平？">Peace?</div>
-		<div class="init" title="战争？">War?</div>
-		<div class="init" title="世界？">World?</div> -->
-	</section>
+<!-- 	<section>
+	<h1 title="首先：我们要做什么？">First Question: What should we do?</h1>
+	<div>
+		<input type="text"><input type="button" value='submit'>
+	</div>
+	<div class="init" title="我们是谁？">Who we are?</div>
+	<div class="init" title="我们喜欢什么？">What do we like?</div>
+	<div class="init" title="我们要去哪？">Where should we go?</div>
+	<div class="init" title="我们能做啥？">What can we do?</div>
+	<div class="init" title="我们认可啥？">What will be honour?</div>
+	<div class="init" title="理由是啥？">What's the reason?</div>
+	<div class="init" title="奋斗？">Fight?</div>
+	<div class="init" title="擅长？">Avocation?</div>
+	<div class="init" title="尝试？">Taste?</div>
+	<div class="init" title="希望？">Desire?</div>
+	<div class="init" title="淫欲？">Lust?</div>
+	<div class="init" title="空虚？">Bored?</div>
+	<div class="init" title="爱？">Love?</div>
+	<div class="init" title="和平？">Peace?</div>
+	<div class="init" title="战争？">War?</div>
+	<div class="init" title="世界？">World?</div>
+</section> -->
 </body>
 
 <script>
@@ -73,103 +74,56 @@
 		}
 	});
 
+	function init(){
 
-function ajax(json){
-	var settings={
-		url:'/login',
-		method:'post',
-		data:{},
-		dataType:'json',
-		succ:function(){},
-		fail:function(){}
-	};
-	for(var attr in json){
-		if (json.hasOwnProperty(attr)) {
-			settings[attr]=json[attr];
+		var h1 = document.getElementsByTagName('h1');
+		var initContent = document.querySelectorAll('div.init');
+		h1[0].style.fontSize = window.innerHeight * 0.1 + 'px';
+
+		for (let i = 0; i < initContent.length; i++) {
+			var ranLeft = Math.random()*(window.innerWidth - initContent[i].offsetWidth);
+			var ranTop = Math.random()*(window.innerHeight - initContent[i].offsetHeight);
+			initContent[i].style.width = initContent[i].offsetWidth + 10 + 'px';
+			initContent[i].style.left = ranLeft + 'px';
+			initContent[i].style.top = ranTop + 'px';
+			move(initContent[i],'t'+i);
 		}
-	}
-	var att=[];
-	for(var attr in settings.data){
-		att.push(attr+'='+settings.data[attr]);
-	}
-	settings.data = att.join('&');
-	var ajax = new XMLHttpRequest();
-	if (settings.method.toLocaleLowerCase()==='get') {
-		ajax.open(settings.method, settings.url+'?'+settings.data+'&'+new Date().getTime(), true);
-		ajax.send();
-	}else{
-		ajax.open(settings.method, settings.url, true);
-		ajax.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-		ajax.send(settings.data);
-	}
 
-	if (typeof ajax.onload === 'undefined') {
-		ajax.onreadystatechange = ready;
-	}else{
-		ajax.onload = ready;
-	}
-	function ready(){
-		if (ajax.readyState ==4 && ajax.status == 200) {
-			switch (settings.dataType.toLocaleLowerCase()) {
-				case 'string':
-					settings.succ(ajax.responseText);
-					break;
-				case 'json':
-					settings.succ(JSON.parse(ajax.responseText));
-					break;
-				case 'xml':
-					settings.succ(ajax.responseXML);
-					break;
-			}
-		}else {
-			settings:fail(ajax.status);
+
+		function move(ele,interval){
+			var speedX = (Math.random()-0.5)*10;
+			var speedY = (Math.random()-0.5)*10;
+			interval = setInterval(function(){
+				if (ele.offsetLeft <= 0 || ele.offsetLeft+ele.offsetWidth >= window.innerWidth) {
+					speedX = -speedX;
+				}
+				if (ele.offsetTop <= 0 || ele.offsetTop+ele.offsetHeight >= window.innerHeight) {
+					speedY = -speedY;
+				}
+				ele.style.left = ele.offsetLeft + speedX + 'px';
+				ele.style.top = ele.offsetTop + speedY + 'px';
+			}, 16);
+			ele.onmouseover=function(){
+				clearInterval(interval);
+				ele.onclick=comments;
+				ele.onmouseout=function(){
+					move(ele,interval);
+				}
+			};
 		}
-	}
-}
-function init(){
-
-	var h1 = document.getElementsByTagName('h1');
-	var initContent = document.querySelectorAll('div.init');
-	h1[0].style.fontSize = window.innerHeight * 0.1 + 'px';
-
-	for (let i = 0; i < initContent.length; i++) {
-		var ranLeft = Math.random()*(window.innerWidth - initContent[i].offsetWidth);
-		var ranTop = Math.random()*(window.innerHeight - initContent[i].offsetHeight);
-		initContent[i].style.width = initContent[i].offsetWidth + 10 + 'px';
-		initContent[i].style.left = ranLeft + 'px';
-		initContent[i].style.top = ranTop + 'px';
-		move(initContent[i],'t'+i);
-	}
-
-
-	function move(ele,interval){
-		var speedX = (Math.random()-0.5)*10;
-		var speedY = (Math.random()-0.5)*10;
-		interval = setInterval(function(){
-			if (ele.offsetLeft <= 0 || ele.offsetLeft+ele.offsetWidth >= window.innerWidth) {
-				speedX = -speedX;
-			}
-			if (ele.offsetTop <= 0 || ele.offsetTop+ele.offsetHeight >= window.innerHeight) {
-				speedY = -speedY;
-			}
-			ele.style.left = ele.offsetLeft + speedX + 'px';
-			ele.style.top = ele.offsetTop + speedY + 'px';
-		}, 16);
-		ele.onmouseover=function(){
-			clearInterval(interval);
-			ele.onclick=reply;
-			ele.onmouseout=function(){
-				move(ele,interval);
-			}
+		document.onclick=function(e){
+			var l = e.clientX;
+			var t = e.clientY;
+			l+200 > window.innerWidth ? l = l : l = l - 200;
+			t+400 > window.innerHeight ? t = t : t = t - 200;
 		};
+		function add(){
+			var temp = document.createElement('div');
+			var li = document.createElement('li');
+			temp.innerHTML="<input type='text'><input type='button' value='submit' />";
+			document.querySelector('section').appendChild(temp);
+		}
 	}
-	function reply(){
-		var temp = document.createElement('div');
-		var li = document.createElement('li');
-		temp.innerHTML="<input type='text'><input type='button' value='submit' />";
-		document.querySelector('section').appendChild(temp);
-	}
-}
 </script>
 
 </html>

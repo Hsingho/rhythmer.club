@@ -39,7 +39,7 @@ function comments(cont){
 
 function ajax(json){
 	var settings={
-		url:'/login',
+		url:'http://www.rhythmer.club/login',
 		method:'post',
 		data:{},
 		dataType:'json',

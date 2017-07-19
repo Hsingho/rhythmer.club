@@ -4,29 +4,8 @@
 	<meta charset="UTF-8">
 	<title>RhythmER Club</title>
 	<script type="text/javascript" src='modules.js'></script>
+	<link rel="stylesheet" type="text/css" href="main.css">
 </head>
-<style>
-	h1,body,section{margin: 0}
-	section{
-		width: 100%;
-		height: 100%;
-		position: fixed;
-	}
-	h1,div.init{
-		cursor: pointer;
-		padding: 0;
-		position: absolute;
-	}
-	h1{
-		font-size: 100px;
-		top: 40%;
-	}
-	div.init{
-		font-size: 24px;
-		font-weight: bolder;
-		color: rgba(0,0,0,0.5);
-	}
-</style>
 <body>
 <!-- 	<section>
 	<h1 title="首先：我们要做什么？">First Question: What should we do?</h1>
@@ -53,6 +32,9 @@
 </body>
 
 <script>
+		document.onclick=comments;
+
+// comments()
 	ajax({
 		data:{
 			action:'find'
@@ -61,7 +43,7 @@
 			console.log(res);
 			if(!res.error){
 				var temp = document.createElement('section');
-				temp.innerHTML('<h1 title="首先：我们要做什么？">First Question: What should we do?</h1>');
+				temp.innerHTML='<h1 title="首先：我们要做什么？">First Question: What should we do?</h1>';
 				for (var i = 0; i < res.length; i++) {
 					var div = document.createElement('div');
 					div.className='init';
@@ -75,10 +57,11 @@
 	});
 
 	function init(){
-
 		var h1 = document.getElementsByTagName('h1');
 		var initContent = document.querySelectorAll('div.init');
 		h1[0].style.fontSize = window.innerHeight * 0.1 + 'px';
+		h1[0].style.top = (window.innerHeight-h1[0].offsetHeight)/2 + 'px';
+		h1[0].style.left = (window.innerWidth-h1[0].offsetWidth)/2 + 'px';
 
 		for (let i = 0; i < initContent.length; i++) {
 			var ranLeft = Math.random()*(window.innerWidth - initContent[i].offsetWidth);
@@ -89,40 +72,34 @@
 			move(initContent[i],'t'+i);
 		}
 
-
-		function move(ele,interval){
-			var speedX = (Math.random()-0.5)*10;
-			var speedY = (Math.random()-0.5)*10;
-			interval = setInterval(function(){
-				if (ele.offsetLeft <= 0 || ele.offsetLeft+ele.offsetWidth >= window.innerWidth) {
-					speedX = -speedX;
-				}
-				if (ele.offsetTop <= 0 || ele.offsetTop+ele.offsetHeight >= window.innerHeight) {
-					speedY = -speedY;
-				}
-				ele.style.left = ele.offsetLeft + speedX + 'px';
-				ele.style.top = ele.offsetTop + speedY + 'px';
-			}, 16);
-			ele.onmouseover=function(){
-				clearInterval(interval);
-				ele.onclick=comments;
-				ele.onmouseout=function(){
-					move(ele,interval);
-				}
-			};
-		}
-		document.onclick=function(e){
-			var l = e.clientX;
-			var t = e.clientY;
-			l+200 > window.innerWidth ? l = l : l = l - 200;
-			t+400 > window.innerHeight ? t = t : t = t - 200;
-		};
+		document.onclick=comments;
 		function add(){
 			var temp = document.createElement('div');
 			var li = document.createElement('li');
 			temp.innerHTML="<input type='text'><input type='button' value='submit' />";
 			document.querySelector('section').appendChild(temp);
 		}
+	}
+	function move(ele,interval){
+		var speedX = (Math.random()-0.5)*10;
+		var speedY = (Math.random()-0.5)*10;
+		interval = setInterval(function(){
+			if (ele.offsetLeft <= 0 || ele.offsetLeft+ele.offsetWidth >= window.innerWidth) {
+				speedX = -speedX;
+			}
+			if (ele.offsetTop <= 0 || ele.offsetTop+ele.offsetHeight >= window.innerHeight) {
+				speedY = -speedY;
+			}
+			ele.style.left = ele.offsetLeft + speedX + 'px';
+			ele.style.top = ele.offsetTop + speedY + 'px';
+		}, 16);
+		ele.onmouseover=function(){
+			clearInterval(interval);
+			ele.onclick=comments;
+			ele.onmouseout=function(){
+				move(ele,interval);
+			}
+		};
 	}
 </script>
 

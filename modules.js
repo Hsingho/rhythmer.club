@@ -52,7 +52,16 @@ function comments(e){//添加评论模块
 			alert('Please Enter Your Comments!');
 			return;
 		}
-		// ajax();
+		ajax({
+			url:'/save',
+			data:{
+				name:input.value,
+				message:text.value
+			},
+			succ:function(){
+				alert('Success!');
+			}
+		});
 	};
 }
 
@@ -78,7 +87,7 @@ function comList(ev){//返回留言信息列表
 
 function ajax(json){
 	var settings={
-		url:'/login',
+		url:'/find',
 		method:'post',
 		data:{},
 		dataType:'json',

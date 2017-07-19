@@ -32,13 +32,7 @@
 </body>
 
 <script>
-		document.onclick=comments;
-
-// comments()
 	ajax({
-		data:{
-			action:'find'
-		},
 		succ:function(res){
 			console.log(res);
 			if(!res.error){

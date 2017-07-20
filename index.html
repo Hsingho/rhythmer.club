@@ -32,6 +32,7 @@
 </body>
 
 <script>
+	var commentsAll = {};
 	ajax({
 		succ:function(res){
 			console.log(res);
@@ -41,7 +42,9 @@
 				for (var i = 0; i < res.length; i++) {
 					var div = document.createElement('div');
 					div.className='init';
-					div.innerHTML=res[i];
+					div.innerHTML=res[i].name+': '+res[i].message;
+					div.setAttribute('comID', res[i]._id);
+					commentsAll[res[i]._id]=res[i].comments;
 					temp.appendChild(div);
 				}
 				document.querySelector('body').appendChild(temp);
@@ -89,10 +92,10 @@
 		}, 16);
 		ele.onmouseover=function(){
 			clearInterval(interval);
-			ele.onclick=comments;
 			ele.onmouseout=function(){
 				move(ele,interval);
-			}
+			};
+			ele.onclick=comList;
 		};
 	}
 </script>

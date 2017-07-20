@@ -65,24 +65,48 @@ function comments(e){//添加评论模块
 	};
 }
 
-function comList(ev){//返回留言信息列表
+function comList(e){//返回留言信息列表
+	event.cancelBubble = true;
 	ajax({
+		url:'/findOne',
 		data:{
-			// id:ev.targetNode.id
+			_id:this.getAttribute('comID')
 		},
-		action:'findOne',
 		succ:function(res){
-			n=0;
-			for (var i = 0; i < res.comments.length; i++) {
-				var li = document.createElement('li');
-				li.innerHTML=res.comments[i].name+': '+res.comments[i].comment;
-				ul.appendChild(li);
-			}
-			div.appendChild(ul);
-			temp.appendChild(div);
-			document.querySelector('body').appendChild(temp);
+			comListOrder(res,e);
 		}
 	});
+}
+
+function comListOrder(res,e){//输出留言信息列表页面
+	var body = document.querySelector('body');
+	var l = e.clientX;
+	var t = e.clientY;
+	l+400 > window.innerWidth ? l=l-400 : l = l;
+	t+300 > window.innerHeight ? t=t-300 : t = t;
+
+	var temp = document.createElement('section');
+	var ul = document.createElement('ul');
+	temp.id='comments';
+	ul.style.left=l+'px';
+	ul.style.top = t+'px';
+
+	console.log(res);
+	if (res.hasOwnProperty('comments')) {
+		for (var i = res.comments.length-1; i>=0 ; i--) {
+			var li = document.createElement('li');
+			li.innerHTML=res.comments[i].name+': '+res.comments[i].comment;
+			ul.appendChild(li);
+		}
+	}else{
+		ul.innerHTML = '暂无留言';
+	}
+	temp.appendChild(ul);
+	temp.onclick=function(){
+		event.cancelBubble = true;
+		body.removeChild(temp);
+	};
+	body.appendChild(temp);
 }
 
 function ajax(json){

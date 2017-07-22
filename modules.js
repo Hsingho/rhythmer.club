@@ -65,7 +65,7 @@ function comments(e){//添加评论模块
 	};
 }
 
-function comList(e){//返回留言信息列表
+function comList(e,setEle){//返回留言信息列表
 	event.cancelBubble = true;
 	ajax({
 		url:'/findOne',
@@ -73,12 +73,12 @@ function comList(e){//返回留言信息列表
 			_id:this.getAttribute('comID')
 		},
 		succ:function(res){
-			comListOrder(res,e);
+			comListOrder(res,e,setEle);
 		}
 	});
 }
 
-function comListOrder(res,e){//输出留言信息列表页面
+function comListOrder(res,e,setEle){//输出留言信息列表页面
 	var body = document.querySelector('body');
 	var l = e.clientX;
 	var t = e.clientY;
@@ -105,6 +105,7 @@ function comListOrder(res,e){//输出留言信息列表页面
 	temp.onclick=function(){
 		event.cancelBubble = true;
 		body.removeChild(temp);
+		move(setEle);
 	};
 	body.appendChild(temp);
 }

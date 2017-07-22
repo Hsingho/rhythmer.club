@@ -66,7 +66,7 @@
 			initContent[i].style.width = initContent[i].offsetWidth + 10 + 'px';
 			initContent[i].style.left = ranLeft + 'px';
 			initContent[i].style.top = ranTop + 'px';
-			move(initContent[i],'t'+i);
+			move(initContent[i]);
 		}
 
 		document.onclick=comments;
@@ -77,25 +77,31 @@
 			document.querySelector('section').appendChild(temp);
 		}
 	}
-	function move(ele,interval){
-		var speedX = (Math.random()-0.5)*10;
-		var speedY = (Math.random()-0.5)*10;
-		interval = setInterval(function(){
-			if (ele.offsetLeft <= 0 || ele.offsetLeft+ele.offsetWidth >= window.innerWidth) {
-				speedX = -speedX;
+	function move(ele){
+		var setEle = ele.ele ? ele : {
+			ele: ele,
+			speedX: (Math.random()-0.5)*10,
+			speedY: (Math.random()-0.5)*10
+		};
+		setEle.interval = setInterval(function(){
+			if (setEle.ele.offsetLeft <= 0 || setEle.ele.offsetLeft+setEle.ele.offsetWidth >= window.innerWidth) {
+				setEle.speedX = -setEle.speedX;
 			}
-			if (ele.offsetTop <= 0 || ele.offsetTop+ele.offsetHeight >= window.innerHeight) {
-				speedY = -speedY;
+			if (setEle.ele.offsetTop <= 0 || setEle.ele.offsetTop+setEle.ele.offsetHeight >= window.innerHeight) {
+				setEle.speedY = -setEle.speedY;
 			}
-			ele.style.left = ele.offsetLeft + speedX + 'px';
-			ele.style.top = ele.offsetTop + speedY + 'px';
+			setEle.ele.style.left = setEle.ele.offsetLeft + setEle.speedX + 'px';
+			setEle.ele.style.top = setEle.ele.offsetTop + setEle.speedY + 'px';
 		}, 16);
-		ele.onmouseover=function(){
-			clearInterval(interval);
-			ele.onmouseout=function(){
-				move(ele,interval);
+		setEle.ele.onmouseover=function(){
+			clearInterval(setEle.interval);
+			setEle.ele.onmouseout=function(){
+				move(setEle);
 			};
-			ele.onclick=comList;
+			setEle.ele.onclick=function(e){
+				setEle.ele.onmouseout = null;
+				comList(e,setEle);
+			};
 		};
 	}
 </script>

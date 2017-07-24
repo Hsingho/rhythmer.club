@@ -35,7 +35,6 @@
 	var commentsAll = {};
 	ajax({
 		succ:function(res){
-			console.log(res);
 			if(!res.error){
 				var temp = document.createElement('section');
 				temp.innerHTML='<h1 title="首先：我们要做什么？">First Question: What should we do?</h1>';
@@ -44,7 +43,7 @@
 					div.className='init';
 					div.innerHTML=res[i].name+': '+res[i].message;
 					div.setAttribute('comID', res[i]._id);
-					commentsAll[res[i]._id]=res[i].comments;
+					if(!res[i].comments){commentsAll[res[i]._id]=res[i].comments;}
 					temp.appendChild(div);
 				}
 				document.querySelector('body').appendChild(temp);

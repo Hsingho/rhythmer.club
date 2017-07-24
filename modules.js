@@ -56,7 +56,8 @@ function comments(e){//添加评论模块
 			url:'/save',
 			data:{
 				name:input.value,
-				message:text.value
+				message:text.value,
+				comments:{}
 			},
 			succ:function(){
 				alert('Success!');
@@ -67,19 +68,20 @@ function comments(e){//添加评论模块
 
 function comList(e,setEle){//返回留言信息列表
 	event.cancelBubble = true;
-	ajax({
-		url:'/findOne',
-		data:{
-			_id:this.getAttribute('comID')
-		},
-		succ:function(res){
-			comListOrder(res,e,setEle);
-		}
-	});
-}
+// 	ajax({
+// 		url:'/findOne',
+// 		data:{
+// 			_id:e.target.getAttribute('comID')
+// 		},
+// 		succ:function(res){
+// 			comListOrder(res,e,setEle);
+// 		}
+// 	});
+// }
 
-function comListOrder(res,e,setEle){//输出留言信息列表页面
+// function comListOrder(res,e,setEle){//输出留言信息列表页面
 	var body = document.querySelector('body');
+	var thisID = e.target.getAttribute('comID');
 	var l = e.clientX;
 	var t = e.clientY;
 	l+400 > window.innerWidth ? l=l-400 : l = l;
@@ -91,11 +93,11 @@ function comListOrder(res,e,setEle){//输出留言信息列表页面
 	ul.style.left=l+'px';
 	ul.style.top = t+'px';
 
-	console.log(res);
-	if (res.hasOwnProperty('comments')) {
-		for (var i = res.comments.length-1; i>=0 ; i--) {
+	console.log(commentsAll[thisID]);
+	if (commentsAll[thisID]) {
+		for (var i = commentsAll[thisID].length-1; i>=0 ; i--) {
 			var li = document.createElement('li');
-			li.innerHTML=res.comments[i].name+': '+res.comments[i].comment;
+			li.innerHTML=commentsAll[thisID][i].name+': '+commentsAll[thisID][i].comment;
 			ul.appendChild(li);
 		}
 	}else{

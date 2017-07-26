@@ -43,7 +43,7 @@
 					div.className='init';
 					div.innerHTML=res[i].name+': '+res[i].message;
 					div.setAttribute('comID', res[i]._id);
-					if(!res[i].comments){commentsAll[res[i]._id]=res[i].comments;}
+					if(res[i].comments){commentsAll[res[i]._id]=res[i].comments;}
 					temp.appendChild(div);
 				}
 				document.querySelector('body').appendChild(temp);
@@ -69,12 +69,6 @@
 		}
 
 		document.onclick=comments;
-		function add(){
-			var temp = document.createElement('div');
-			var li = document.createElement('li');
-			temp.innerHTML="<input type='text'><input type='button' value='submit' />";
-			document.querySelector('section').appendChild(temp);
-		}
 	}
 	function move(ele){
 		var setEle = ele.ele ? ele : {

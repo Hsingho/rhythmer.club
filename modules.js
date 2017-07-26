@@ -5,7 +5,7 @@
 });
 */
 function comments(e){//添加评论模块
-	document.onclick=null;
+	event.cancelBubble=true;
 	var body = document.querySelector('body');
 	var l = e.offsetX;
 	var t = e.offsetY;
@@ -26,11 +26,11 @@ function comments(e){//添加评论模块
 	input.placeholder='Please Enter Your Name';
 	text.name='comments';
 	text.placeholder='Enter Message';
-	button.innerHTML='Comment';
+	button.innerHTML='GO';
 
 	div.appendChild(input);
-	div.appendChild(text);
 	div.appendChild(button);
+	div.appendChild(text);
 	temp.appendChild(div);
 	body.appendChild(temp);
 
@@ -68,32 +68,34 @@ function comments(e){//添加评论模块
 
 function comList(e,setEle){//返回留言信息列表
 	event.cancelBubble = true;
-// 	ajax({
-// 		url:'/findOne',
-// 		data:{
-// 			_id:e.target.getAttribute('comID')
-// 		},
-// 		succ:function(res){
-// 			comListOrder(res,e,setEle);
-// 		}
-// 	});
-// }
 
-// function comListOrder(res,e,setEle){//输出留言信息列表页面
 	var body = document.querySelector('body');
 	var thisID = e.target.getAttribute('comID');
 	var l = e.clientX;
-	var t = e.clientY;
 	l+400 > window.innerWidth ? l=l-400 : l = l;
-	t+300 > window.innerHeight ? t=t-300 : t = t;
 
 	var temp = document.createElement('section');
-	var ul = document.createElement('ul');
-	temp.id='comments';
-	ul.style.left=l+'px';
-	ul.style.top = t+'px';
+	var div = document.createElement('div');
+	var input = document.createElement('input');
+	var text = document.createElement('textarea');
+	var button = document.createElement('button');
+	
+	temp.id = 'comments';
+	div.style.left=l+'px';
+	div.style.top = (window.innerHeight - 600)/2+'px';
+	div.className = 'comment'
+	input.type='text';
+	input.name='name';
+	input.placeholder='Please Enter Your Name';
+	text.name='comments';
+	text.placeholder='Enter Message';
+	button.innerHTML='GO';
 
-	console.log(commentsAll[thisID]);
+	div.appendChild(input);
+	div.appendChild(button);
+	div.appendChild(text);
+
+	var ul = document.createElement('ul');
 	if (commentsAll[thisID]) {
 		for (var i = commentsAll[thisID].length-1; i>=0 ; i--) {
 			var li = document.createElement('li');
@@ -101,15 +103,43 @@ function comList(e,setEle){//返回留言信息列表
 			ul.appendChild(li);
 		}
 	}else{
-		ul.innerHTML = '暂无留言';
+		ul.innerHTML = '<li>暂无留言</li>';
 	}
-	temp.appendChild(ul);
-	temp.onclick=function(){
-		event.cancelBubble = true;
-		body.removeChild(temp);
-		move(setEle);
-	};
+	div.appendChild(ul);
+
+	temp.appendChild(div);
 	body.appendChild(temp);
+
+	temp.onclick=function(e){
+		event.cancelBubble = true;
+		if (e.target === temp) {
+			body.removeChild(temp);
+			temp.onclick=null;
+			move(setEle);
+		}
+	};
+	button.onclick=function(){
+		event.cancelBubble = true;
+		if (!input.value) {
+			alert('Please Enter Your Name!');
+			return;
+		}
+		if (!text.value) {
+			alert('Please Enter Your Comments!');
+			return;
+		}
+		ajax({
+			url:'/update',
+			data:{
+				name:input.value,
+				message:text.value,
+				comments:{}
+			},
+			succ:function(){
+				alert('Success!');
+			}
+		});
+	};
 }
 
 function ajax(json){

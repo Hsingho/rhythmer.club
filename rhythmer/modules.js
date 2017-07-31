@@ -96,10 +96,10 @@ function comList(e,setEle){//返回留言信息列表
 	div.appendChild(text);
 
 	var ul = document.createElement('ul');
-	if (commentsAll[thisID]) {
+	if (commentsAll[thisID].length) {
 		for (var i = commentsAll[thisID].length-1; i>=0 ; i--) {
 			var li = document.createElement('li');
-			li.innerHTML=commentsAll[thisID][i].name+': '+commentsAll[thisID][i].comment;
+			li.innerHTML=commentsAll[thisID][i].name+': '+commentsAll[thisID][i].message;
 			ul.appendChild(li);
 		}
 	}else{
@@ -131,11 +131,11 @@ function comList(e,setEle){//返回留言信息列表
 		ajax({
 			url:'/update',
 			data:{
-				name:input.value,
-				message:text.value,
-				comments:{}
+				_id:thisID,
+				comments:JSON.stringify({"name":input.value,"message":text.value})
 			},
-			succ:function(){
+			succ:function(res){
+				console.log(res);
 				alert('Success!');
 			}
 		});

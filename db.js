@@ -44,6 +44,37 @@ function search(data, callback){
 	});
 }
 
+function update(data, callback){
+	var comments = JSON.parse(data.comments);
+	data._id = ObjectID(data._id);
+	var index = {
+		_id:data._id
+	};
+	MongoClient.connect(url,function(err, db){
+		if (err) {
+			console.log(err);
+		}else{
+			var collection = db.collection(documentName);
+
+			collection.findOne(index, function(err, results){
+				if (err) {
+					console.log(err);
+				}else{
+					results.comments.push(comments);
+					collection.update(index, results, function(err,result){
+						if (err) {
+							console.log(err);
+						}else{
+							callback && callback(results);
+							db.close();
+						}
+					});
+				}
+			});
+		}
+	});
+}
+
 function searchAll(callback){
 	MongoClient.connect(url,function(err, db){
 		if (err) {
@@ -60,6 +91,7 @@ function searchAll(callback){
 }
 
 module.exports = {
+	update:update,
 	save:save,
 	find:searchAll,
 	findOne:search

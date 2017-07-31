@@ -34,3 +34,8 @@ app2.post('/save',function(req,res){
 		res.json(doc)
 	});
 });
+app2.post('/update',function(req,res){
+	db.update(req.body,function(doc){
+		res.json(doc)
+	});
+});

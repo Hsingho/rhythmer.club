@@ -33,6 +33,7 @@
 
 <script>
 	var commentsAll = {};
+	var msgAll = {};
 	ajax({
 		succ:function(res){
 			if(!res.error){
@@ -42,6 +43,7 @@
 					var div = document.createElement('div');
 					div.className='init';
 					div.innerHTML=res[i].name+': '+res[i].message;
+					msgAll[res[i]._id] = res[i].name+': '+res[i].message;
 					div.setAttribute('comID', res[i]._id);
 					if(res[i].comments){commentsAll[res[i]._id]=res[i].comments;}
 					temp.appendChild(div);
@@ -60,16 +62,51 @@
 		h1[0].style.left = (window.innerWidth-h1[0].offsetWidth)/2 + 'px';
 
 		for (let i = 0; i < initContent.length; i++) {
-			var ranLeft = Math.random()*(window.innerWidth - initContent[i].offsetWidth);
-			var ranTop = Math.random()*(window.innerHeight - initContent[i].offsetHeight);
-			initContent[i].style.width = initContent[i].offsetWidth + 10 + 'px';
-			initContent[i].style.left = ranLeft + 'px';
-			initContent[i].style.top = ranTop + 'px';
-			move(initContent[i]);
+			addEle(initContent[i]);
 		}
 
-		document.onclick=comments;
+		document.onclick=function(e){
+			mod(e, 'Message', function(name, msg){
+				ajax({
+					url:'/save',
+					data:{
+						'name':name,
+						'message':msg
+					},
+					succ:function(res){
+						var res = res.ops[0];
+						var body = document.querySelector('body');
+						var temp = document.createElement('section');
+						var div = document.createElement('div');
+						div.className='init';
+						div.innerHTML=res.name+': '+res.message;
+						msgAll[res._id] = res.name+': '+res.message;
+						div.setAttribute('comID', res._id);
+						if(res.comments){commentsAll[res._id]=res.comments;}
+						temp.appendChild(div);
+						body.appendChild(temp);
+						var l = e.clientX+div.offsetWidth >= window.innerWidth ? e.clientX-div.offsetWidth : e.clientX,
+							t = e.clientY+div.offsetHeight >= window.innerHeight ? e.clientY-div.offsetHeight : e.clientY;
+						addEle(div, l, t);
+
+						temp = document.querySelector('#comments');
+						body.removeChild(temp);
+						temp.onclick = null;
+					}
+				});
+			});
+		};
 	}
+
+	function addEle(ele, l ,t){
+		var ranLeft = l ? l : Math.random()*(window.innerWidth - ele.offsetWidth);
+		var ranTop = t ? t : Math.random()*(window.innerHeight - ele.offsetHeight);
+		ele.style.width = ele.offsetWidth + 10 + 'px';
+		ele.style.left = ranLeft + 'px';
+		ele.style.top = ranTop + 'px';
+		move(ele);
+	}
+
 	function move(ele){
 		var setEle = ele.ele ? ele : {
 			ele: ele,
@@ -92,8 +129,31 @@
 				move(setEle);
 			};
 			setEle.ele.onclick=function(e){
+				event.cancelBubble = true;
 				setEle.ele.onmouseout = null;
-				comList(e,setEle);
+				var thisID = e.target.getAttribute('comID');
+				mod(e, msgAll[thisID], function(name, msg){
+					ajax({
+						url:'/update',
+						data:{
+							_id:thisID,
+							comments:JSON.stringify({"name":name,"message":msg})
+						},
+						succ:function(res){
+							var com = res.comments[res.comments.length-1];
+							commentsAll[thisID] = res.comments;
+							
+							var div = document.querySelector('#comments>div>ul');
+							var ul = document.createElement('ul');
+							for (var i = commentsAll[thisID].length-1; i>=0; i--){
+								var li = document.createElement('li');
+								li.innerHTML = '【'+(i+1)+'】'+commentsAll[thisID][i].name+"：“"+commentsAll[thisID][i].message+"”";
+								ul.appendChild(li);
+							}
+							div.innerHTML = ul.innerHTML;
+						}
+					});
+				}, setEle);
 			};
 		};
 	}

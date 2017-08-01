@@ -142,6 +142,111 @@ function comList(e,setEle){//返回留言信息列表
 	};
 }
 
+
+/*
+mod(e, list, callback)
+	e 			->	e			| 	event infomation
+	list 		->	Boolean		|	if ul elements should exist
+	callback	->	function	|	callback(name, msg)
+
+Callback of update msg:
+		function (name, msg) {
+			ajax({
+				url:'/update',
+				data:{
+					_id:thisID,
+					comments:JSON.stringify({"name":name,"message":msg})
+				},
+				succ:function(res){
+					console.log(res);
+					alert('Success!');
+				}
+			});
+		}
+Callback of save msg:
+		function (name, msg){
+			ajax({
+				url:'/save',
+				data:{
+					'name': name,
+					'message': msg
+				},
+				succ:function(res){
+					console.log(res);
+					alert('Success!');
+				}
+			})
+		}
+*/
+function mod(e, list, callback){
+	event.cancelBubble = true;
+	var body = document.querySelector('body'),
+		temp = document.createElement('section'),
+		div = document.createElement('div'),
+		input = document.createElement('input'),
+		text = document.createElement('textarea'),
+		button = document.createElement('button');
+	var thisID = e.target.getAttribute('comID');
+	var l = e.clientX,
+		t = e.clientY;
+
+	temp.onclick = function(e){
+		event.cancelBubble = true;
+		if (e.target === temp) {
+			body.removeChild(temp);
+		}
+	};
+	/*Submit button event creating*/
+	button.onclick = function(){
+		event.cancelBubble = true;
+		if (!input.value) {
+			alert('Please Enter Your Name!');
+			return;
+		}
+		if (!text.value) {
+			alert('Please Enter Your Message!');
+			return;
+		}
+		callback && callback(input.value, text.value);
+	};
+
+
+	temp.id = 'comments';
+	div.className = 'comment';
+	input.type = 'text';
+	input.name = 'name';
+	input.placeholder = 'Please Enter Your Name';
+	text.name = 'comments';
+	text.placeholder = 'Please Enter Your Message';
+	button.innerHTML = 'GO';
+
+	div.appendChild(input);
+	div.appendChild(button);
+	div.appendChild(text);
+
+	if (list) {
+		var ul = document.createElement('ul');
+		if (commentsAll[thisID].length) {
+			for (var i = commentsAll.length-1; i>=0; i--){
+				var li = document.createElement('li');
+				li.innerHTML = commentsAll[thisID][i].name+":"+commentsAll[thisID][i].message;
+				ul.appendChild(li);
+			}
+		}else{
+			ul.innerHTML = '<li>暂无留言 =_=!</li>';
+		}
+		div.appendChild(ul);
+	}
+	temp.appendChild(div);
+	body.appendChild(temp);
+
+	l = l+400>window.innerWidth ? l-400 : l;
+	t = t+div.offsetHeight>window.innerHeight ? window.innerHeight-div.offsetHeight : t;
+	div.style.left = l + 'px';
+	div.style.top = t + 'px';
+}
+
+
 function ajax(json){
 	var settings={
 		url:'/find',
